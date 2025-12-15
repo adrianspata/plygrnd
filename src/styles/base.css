@@ -1,0 +1,168 @@
+
+@import url(https://fonts.googleapis.com/css2?family=Manrope:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Syne:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap);
+:root {
+  /* Content layers */
+  --z-content-low: 10; /* Minor elevated content */
+  --z-content: 20; /* Standard elevated content */
+  --z-content-high: 30; /* Important content that needs prominence */
+
+  /* Navigation layers */
+  --z-nav-low: 100; /* Secondary navigation components */
+  --z-nav: 200; /* Primary navigation bars */
+  --z-nav-sticky: 300; /* Sticky navigation elements */
+
+  /* Overlay layers */
+  --z-overlay: 400;
+
+  --z-spotlight: 1000; /* Tutorial spotlights/guided help */
+
+  /* System layers */
+  --z-critical: 2000; /* Critical system notifications */
+
+  /* spacing */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+}
+
+:root {
+  /* 
+     MODE: DARK MODE ONLY 
+     The prompt requested an "almost entirely black background" with subtle lighting.
+     Therefore, the root variables define this dark aesthetic directly.
+  */
+
+  /* Background: A very deep, cold void (not pure black to allow shadows) */
+  --background: hsl(240 10% 4%); 
+  --foreground: hsl(240 5% 90%);
+
+  /* Surface: Slightly elevated, used for the HUD/Form background */
+  /* High transparency intended for backdrop-filter usage */
+  --surface: hsl(240 10% 8%);
+  --surface-foreground: hsl(240 5% 95%);
+
+  /* UI Elements */
+  --sidebar: hsl(240 10% 6%);
+  --sidebar-foreground: hsl(240 5% 80%);
+  
+  --card: hsl(240 10% 6%);
+  --card-foreground: hsl(240 5% 90%);
+  
+  --popup: hsl(240 10% 8%);
+  --popup-foreground: hsl(240 5% 95%);
+
+  /* Primary: Pure white light (The "Rim Light") */
+  --primary: hsl(0 0% 100%);
+  --primary-foreground: hsl(240 10% 4%);
+
+  /* Secondary: A dark steel grey for subtle buttons */
+  --secondary: hsl(240 5% 15%);
+  --secondary-foreground: hsl(0 0% 100%);
+
+  /* Accent: A subtle electric blue glow for focus states */
+  --accent: hsl(210 100% 70%);
+  --accent-foreground: hsl(210 100% 10%);
+
+  /* Muted: For placeholder text and borders */
+  --muted: hsl(240 5% 20%);
+  --muted-foreground: hsl(240 5% 50%);
+
+  /* Functional Colors - Desaturated to maintain noir vibe */
+  --success: hsl(140 30% 50%);
+  --success-foreground: hsl(0 0% 100%);
+  --error: hsl(0 40% 50%);
+  --error-foreground: hsl(0 0% 100%);
+  --warning: hsl(40 40% 50%);
+  --warning-foreground: hsl(0 0% 100%);
+  --info: hsl(210 40% 50%);
+  --info-foreground: hsl(0 0% 100%);
+  --info-hover: hsl(210 40% 60%);
+  --info-active: hsl(210 40% 40%);
+
+  /* Borders: Very subtle, barely there */
+  --border: hsl(240 5% 15%);
+
+  /* Font Families */
+  /* Manrope for geometric clarity, Space Mono for the "technical" feel */
+  --font-family-base: 'Manrope', sans-serif;
+  --font-family-heading: 'Manrope', sans-serif;
+  --font-family-monospace: 'Space Mono', monospace;
+  --font-family-cursive: 'Syne', sans-serif; /* Optional for artistic touches */
+
+  /* Shadows: Used for glow effects rather than depth */
+  --shadow: 0 1px 2px 0 hsl(0 0% 0% / 0.5);
+  --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.5), 0 2px 4px -1px hsl(0 0% 0% / 0.3);
+  --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.7), 0 4px 6px -2px hsl(0 0% 0% / 0.5);
+  --shadow-focus: 0 0 0 2px hsl(240 10% 4%), 0 0 0 4px hsl(210 100% 70% / 0.3); /* Glow ring */
+
+  /* Radius: Machined, industrial feel */
+  --radius-sm: 2px;
+  --radius: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  /* Animation: Slow, cinematic easing */
+  --animation-duration-fast: 200ms;
+  --animation-duration-normal: 500ms;
+  --animation-duration-slow: 1200ms; /* For the fade-ins */
+
+  /* Chart Colors: Monochrome spectrum */
+  --chart-color-1: hsl(0 0% 100%);
+  --chart-color-2: hsl(0 0% 80%);
+  --chart-color-3: hsl(0 0% 60%);
+  --chart-color-4: hsl(0 0% 40%);
+  --chart-color-5: hsl(0 0% 20%);
+}
+
+.dark {
+  /* The design is natively dark mode, so no overrides are needed here. */
+}
+@layer base {
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-family-base);
+  }
+
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+
+  button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  th, td {
+    display: table-cell!important;
+  }
+}

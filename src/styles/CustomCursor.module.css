@@ -1,0 +1,27 @@
+.customCursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 25px;
+  height: 25px;
+  pointer-events: none;
+  z-index: var(--z-critical);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  /* Center the cursor on the mouse position */
+  margin-left: -12.5px;
+  margin-top: -12.5px;
+  /* Use will-change for better performance */
+  will-change: transform;
+  /* Invert colors over light backgrounds */
+  mix-blend-mode: difference;
+}
+
+.customCursor.visible {
+  opacity: 1;
+}
+
+.customCursor svg {
+  display: block;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+}

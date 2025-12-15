@@ -1,0 +1,159 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-content-high);
+  pointer-events: none;
+}
+
+/* Top Left - Brand */
+.topLeft {
+  position: absolute;
+  top: var(--spacing-6);
+  left: var(--spacing-6);
+  pointer-events: auto;
+}
+
+.brandButton {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all var(--animation-duration-fast) ease;
+}
+
+.brandButton:hover {
+  opacity: 0.7;
+}
+
+.brandButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Top Right - Sound Toggle */
+.topRight {
+  position: absolute;
+  top: var(--spacing-6);
+  right: var(--spacing-6);
+  pointer-events: auto;
+}
+
+.soundToggle {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all var(--animation-duration-fast) ease;
+}
+
+.soundToggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.soundIndicator {
+  vertical-align: center;
+  margin-left: 4px;
+  font-size: 0.75rem;
+  line-height: 1;
+  animation: breathe 2.5s ease-in-out infinite;
+}
+
+/* Bottom Left - Scroll Percentage */
+.bottomLeft {
+  position: absolute;
+  bottom: var(--spacing-6);
+  left: var(--spacing-6);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.scrollPercentage {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+}
+
+.progressBarContainer {
+  display: flex;
+  align-items: center;
+}
+
+.progressBarTrack {
+  width: 5rem;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #ffffff;
+  transition: width 0.3s ease;
+}
+
+/* Bottom Right - Scroll Hint */
+.bottomRight {
+  position: absolute;
+  bottom: var(--spacing-6);
+  right: var(--spacing-6);
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-3);
+}
+
+.bottomRight.visible {
+  opacity: 1;
+}
+
+.bottomRight.hidden {
+  opacity: 0;
+}
+
+.scrollText {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+}
+
+.verticalLine {
+  width: 1px;
+  height: 3rem;
+  background-color: rgba(255, 255, 255, 0.6);
+}
