@@ -260,17 +260,60 @@ const NewsletterForm = ({
   onFormSubmit: () => void;
 }) => {
   const { mutate: subscribe, isPending } = useNewsletterSubscribe();
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
+    watch,
+    setValue,
   } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
   });
 
+  const emailValue = watch("email");
+
+  // Load saved emails from localStorage when component mounts or focus
+  const handleEmailFocus = () => {
+    const savedEmails = localStorage.getItem("savedEmails");
+    if (savedEmails) {
+      try {
+        const emails = JSON.parse(savedEmails);
+        setSuggestions(Array.isArray(emails) ? emails : []);
+        setShowSuggestions(true);
+      } catch (e) {
+        console.error("Failed to parse saved emails", e);
+      }
+    }
+  };
+
+  const handleSelectSuggestion = (email: string) => {
+    setValue("email", email);
+    setSelectedSuggestion(email);
+    setShowSuggestions(false);
+  };
+
   const onSubmit = (data: FormSchema) => {
+    // Save email to localStorage
+    const savedEmails = localStorage.getItem("savedEmails");
+    let emailsList: string[] = [];
+    try {
+      emailsList = savedEmails ? JSON.parse(savedEmails) : [];
+    } catch (e) {
+      emailsList = [];
+    }
+
+    // Add new email if not already in list
+    if (!emailsList.includes(data.email)) {
+      emailsList.unshift(data.email); // Add to beginning
+      emailsList = emailsList.slice(0, 5); // Keep only last 5
+      localStorage.setItem("savedEmails", JSON.stringify(emailsList));
+    }
+
     // Notify parent that form was submitted
     onFormSubmit();
 
@@ -281,6 +324,9 @@ const NewsletterForm = ({
 
     // Clear form immediately
     reset();
+    setSuggestions([]);
+    setShowSuggestions(false);
+    setSelectedSuggestion(null);
 
     // Scroll to top immediately
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -313,14 +359,57 @@ const NewsletterForm = ({
             <label htmlFor="email-input" className={styles.label}>
               EMAIL ADDRESS
             </label>
-            <Input
-              {...register("email")}
-              id="email-input"
-              placeholder="your@email.com"
-              className={styles.input}
-              autoComplete="off"
-              disabled={!visible || isPending}
-            />
+            <div style={{ position: "relative" }}>
+              <Input
+                {...register("email")}
+                id="email-input"
+                placeholder="your@email.com"
+                className={styles.input}
+                onFocus={handleEmailFocus}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                disabled={!visible || isPending}
+              />
+              {showSuggestions && suggestions.length > 0 && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    backgroundColor: "rgba(0, 0, 0, 0.9)",
+                    border: "1px solid white",
+                    borderTop: "none",
+                    borderRadius: "0 0 4px 4px",
+                    zIndex: 10,
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                >
+                  {suggestions.map((email, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleSelectSuggestion(email)}
+                      style={{
+                        padding: "8px 12px",
+                        cursor: "pointer",
+                        borderBottom: index < suggestions.length - 1 ? "1px solid rgba(255,255,255,0.1)" : "none",
+                        color: "white",
+                        fontSize: "0.875rem",
+                        transition: "background-color 0.2s",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
+                    >
+                      {email}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             {errors.email && (
               <span className={styles.error}>{errors.email.message}</span>
             )}
