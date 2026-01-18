@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2, ArrowDown } from "lucide-react";
-import { Helmet } from "react-helmet";
 import { toast } from "sonner";
 
 import { useAudioPlayer } from "./useAudioPlayer";
@@ -477,28 +476,6 @@ export default function LandingPage() {
 
   return (
     <>
-      <Helmet>
-        <title>plygrnd. | Interactive 3D Experience</title>
-        <meta
-          name="description"
-          content="A minimal, dark, interactive 3D landing page."
-        />
-        <style>{`
-          body { 
-            background-color: #050505; 
-            overscroll-behavior: none;
-          }
-          /* Hide scrollbar for cleaner look but keep functionality */
-          ::-webkit-scrollbar {
-            width: 8px;
-            background: #050505;
-          }
-          ::-webkit-scrollbar-thumb {
-            background: #222;
-            border-radius: 4px;
-          }
-        `}</style>
-      </Helmet>
 
       <div className={styles.container}>
         {/* Fixed 3D Canvas Background */}
