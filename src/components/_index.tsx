@@ -17,14 +17,12 @@ import { CornerHUD } from "./CornerHUD";
 import { CustomCursor } from "./CustomCursor";
 import styles from "../styles/_index.module.css";
 
-// --- Constants ---
 const FONT_URL =
   "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json";
 const SCROLL_HEIGHT_VH = 500; // Total scroll height in VH
 const INTRO_DURATION = 8.0; // Increased duration for a slower, more cinematic intro
 const TOTAL_SPINS = 2; // Reduced spins (from 3) for a less dizzying effect
 
-// --- Types ---
 type FormSchema = {
   email: string;
 };
