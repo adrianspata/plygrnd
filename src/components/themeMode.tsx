@@ -9,7 +9,6 @@ import React, {
 
 export type ThemeMode = "light" | "dark" | "auto";
 
-// Event mechanism to sync standalone functions with React Context
 type ThemeChangeListener = (mode: ThemeMode) => void;
 const listeners = new Set<ThemeChangeListener>();
 
@@ -35,9 +34,6 @@ function updateTheme(darkPreferred: boolean): void {
 
 let currentMediaQuery: MediaQueryList | null = null;
 
-/**
- * Switch to dark mode by adding the "dark" class to document.body.
- */
 export function switchToDarkMode(): void {
   // Clear any auto mode listener if present.
   if (currentMediaQuery) {
@@ -48,9 +44,6 @@ export function switchToDarkMode(): void {
   notifyThemeChange();
 }
 
-/**
- * Switch to light mode by removing the "dark" class from document.body.
- */
 export function switchToLightMode(): void {
   // Clear any auto mode listener if present.
   if (currentMediaQuery) {
@@ -61,11 +54,6 @@ export function switchToLightMode(): void {
   notifyThemeChange();
 }
 
-/**
- * Switch to auto mode. This function immediately applies the user's color scheme preference
- * and listens for system preference changes to update the theme automatically.
- * It uses the onchange property instead of addEventListener to avoid TypeScript issues.
- */
 export function switchToAutoMode(): void {
   if (currentMediaQuery) {
     currentMediaQuery.onchange = null;
@@ -79,12 +67,6 @@ export function switchToAutoMode(): void {
   notifyThemeChange();
 }
 
-/**
- * Returns the current theme mode:
- * - "auto" if auto mode is enabled,
- * - "dark" if the document body has the "dark" class,
- * - "light" otherwise.
- */
 export function getCurrentThemeMode(): ThemeMode {
   if (currentMediaQuery) {
     return "auto";

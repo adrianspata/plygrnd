@@ -5,9 +5,6 @@ import styles from "../styles/SonnerToaster.module.css";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
-/**
- * This is already included in the global context providers so should not be rendered again.
- */
 export const SonnerToaster = ({ className, ...props }: ToasterProps) => {
   return (
     <Sonner
