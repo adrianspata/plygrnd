@@ -123,7 +123,3 @@
   --chart-color-4: hsl(0 0% 40%);
   --chart-color-5: hsl(0 0% 20%);
 }
-
-.dark {
-  /* The design is natively dark mode, so no overrides are needed here. */
-}
