@@ -10,13 +10,14 @@ app.post('_api/newsletter/subscribe',async c => {
     const { handle } = await import("./endpoints/newsletter/subscribe_POST.js");
     let request = c.req.raw;
     const response = await handle(request);
-    if (!(response instanceof Response) && response.constructor.name !== "Response") {
-      return c.text("Invalid response format. handle should always return a Response object." + response.constructor.name, 500);
+    if (!(response instanceof Response)) {
+      return c.text("Invalid response format. handle should always return a Response object.", 500);
     }
     return response;
   } catch (e) {
     console.error(e);
-    return c.text("Error loading endpoint code " + e.message,  500)
+    const errorMessage = e instanceof Error ? e.message : "Unknown error";
+    return c.text("Error loading endpoint code: " + errorMessage, 500)
   }
 })
 app.use('/*', serveStatic({ root: './dist' }))

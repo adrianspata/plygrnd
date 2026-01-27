@@ -1,5 +1,5 @@
 import { db } from "../../src/components/db";
-import { InputSchema, OutputSchema } from "./subscribe_POST.schema";
+import { InputSchema } from "./subscribe_POST.schema";
 
 export async function handle(request: Request): Promise<Response> {
   try {

@@ -6,7 +6,8 @@ import PageLayout_0 from "./src/components/_index.pageLayout.tsx";
 
 if (!window.requestIdleCallback) {
   window.requestIdleCallback = (cb) => {
-    setTimeout(cb, 1);
+    const handle = setTimeout(cb, 1);
+    return handle as unknown as number;
   };
 }
 
@@ -20,6 +21,7 @@ const fileNameToComponent = new Map([
 
 function makePageRoute(filename: string) {
   const Component = fileNameToComponent.get(filename);
+  if (!Component) return null;
   return <Component />;
 }
 
