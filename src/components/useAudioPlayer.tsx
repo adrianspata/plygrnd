@@ -105,3 +105,50 @@ export function useAudioPlayer(initialVolume = 0.5): AudioPlayerControls {
     audioRef,
   };
 }
+
+export const SpotifyEmbed = ({ shouldPlay }: { shouldPlay: boolean }) => {
+  const elementRef = useRef<HTMLDivElement>(null);
+  const [embedController, setEmbedController] = useState<any>(null);
+
+  useEffect(() => {
+    // 1. Define the callback FIRST
+    (window as any).onSpotifyIframeApiReady = (IFrameAPI: any) => {
+      const element = elementRef.current;
+      if (!element) return;
+
+      const options = {
+        width: "100%",
+        height: "352",
+        uri: "spotify:playlist:3xD9gxk89o4VeFz6TnMFJl",
+      };
+
+      const callback = (EmbedController: any) => {
+        setEmbedController(EmbedController);
+      };
+
+      IFrameAPI.createController(element, options, callback);
+    };
+
+    // 2. Load the script if needed
+    if (!document.getElementById("spotify-iframe-api")) {
+      const script = document.createElement("script");
+      script.id = "spotify-iframe-api";
+      script.src = "https://open.spotify.com/embed/iframe-api/v1";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  // 3. Control playback
+  useEffect(() => {
+    if (!embedController) return;
+
+    if (shouldPlay) {
+      embedController.play();
+    } else {
+      embedController.pause();
+    }
+  }, [shouldPlay, embedController]);
+
+  return <div ref={elementRef} />;
+};
