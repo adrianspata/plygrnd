@@ -1,14 +1,14 @@
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Text3D, Center, Float, Environment } from "@react-three/drei";
+import { Text3D, Center, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2, ArrowDown } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { useAudioPlayer } from "./useAudioPlayer";
+import { useAudioPlayer, SpotifyEmbed } from "./useAudioPlayer";
 import { useNewsletterSubscribe } from "./useNewsletterSubscribe";
 import { useIsMobile } from "./useIsMobile";
 import { Input } from "./Input";
@@ -199,7 +199,7 @@ const Scene = ({
       // Adjust final zoom distance on mobile to be even closer
       const targetX = scrollProgress * -2; // Move left same as desktop
       const targetY = scrollProgress * 0; // Stay level
-      const targetZ = isMobile 
+      const targetZ = isMobile
         ? 5 - scrollProgress * 4.5 // Even closer on mobile (from 5 to 0.5)
         : 5 - scrollProgress * 4; // Desktop (from 5 to 1)
 
@@ -259,20 +259,18 @@ const NewsletterForm = ({
   const { mutate: subscribe, isPending } = useNewsletterSubscribe();
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-    watch,
     setValue,
   } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
   });
 
-  const emailValue = watch("email");
+
 
   // Load saved emails from localStorage when component mounts or focus
   const handleEmailFocus = () => {
@@ -290,7 +288,6 @@ const NewsletterForm = ({
 
   const handleSelectSuggestion = (email: string) => {
     setValue("email", email);
-    setSelectedSuggestion(email);
     setShowSuggestions(false);
   };
 
@@ -323,7 +320,6 @@ const NewsletterForm = ({
     reset();
     setSuggestions([]);
     setShowSuggestions(false);
-    setSelectedSuggestion(null);
 
     // Scroll to top immediately
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -506,6 +502,10 @@ export default function LandingPage() {
             visible={showForm && !formSubmitted}
             onFormSubmit={() => setFormSubmitted(true)}
           />
+          {/* Hidden Spotify Controller - kept in DOM for audio playback */}
+          <div style={{ position: 'fixed', bottom: 0, right: 0, width: 1, height: 1, opacity: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+            <SpotifyEmbed shouldPlay={!isMuted} />
+          </div>
         </div>
 
         {/* Corner HUD */}
