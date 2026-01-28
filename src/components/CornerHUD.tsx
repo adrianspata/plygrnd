@@ -37,7 +37,7 @@ export const CornerHUD = ({
           className={styles.soundToggle}
           aria-label={soundOn ? "Turn sound off" : "Turn sound on"}
         >
-          SOUND {soundOn ? "ON" : "OFF"}
+          SOUND {soundOn ? "OFF" : "ON"}
           <span className={styles.soundIndicator}>
             {soundOn ? "◻︎" : "◼︎"}
           </span>
