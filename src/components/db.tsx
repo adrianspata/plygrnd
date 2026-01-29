@@ -1,6 +1,6 @@
-import {type GeneratedAlways, Kysely, CamelCasePlugin} from 'kysely'
-import {PostgresJSDialect} from 'kysely-postgres-js'
-import {DB} from './schema'
+import { Kysely, CamelCasePlugin } from 'kysely'
+import { PostgresJSDialect } from 'kysely-postgres-js'
+import { DB } from './schema'
 import postgres from 'postgres'
 
 export const db = new Kysely<DB>({
