@@ -1,4 +1,3 @@
-import React from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import {
@@ -7,4 +6,3 @@ import {
 
 const container = document.getElementById("root") as HTMLDivElement;
 createRoot(container).render(<HelmetProvider><App /></HelmetProvider>);
-    

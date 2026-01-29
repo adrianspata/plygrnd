@@ -1,4 +1,4 @@
-import "./loadEnv.js";
+
 import { Hono } from 'hono'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { serve } from '@hono/node-server';
