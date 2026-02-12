@@ -11,7 +11,7 @@ export const useNewsletterSubscribe = (): UseMutationResult<OutputType, Error, I
           Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: "6de01c74-950d-4257-811e-a9ee0fd77ce1",
+          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || "6de01c74-950d-4257-811e-a9ee0fd77ce1",
           email: data.email,
         }),
       });
