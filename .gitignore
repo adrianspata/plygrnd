@@ -74,3 +74,19 @@ Desktop.ini
 .vercel
 .next
 .nuxt
+
+# Security
+*.pem
+*.key
+*.cert
+.env*.local
+secrets/
+credentials/
+
+# Local SQLite databases (if any)
+*.sqlite
+*.db
+
+# Backup files
+*.bak
+*.backup
