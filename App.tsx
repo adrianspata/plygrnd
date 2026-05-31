@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { GlobalContextProviders } from "./src/components/_globalContextProviders";
 import Page_0 from "./src/components/_index.tsx";
 import PageLayout_0 from "./src/components/_index.pageLayout.tsx";
@@ -103,6 +104,7 @@ export function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </GlobalContextProviders>
+      <Analytics />
     </BrowserRouter>
   );
 }
