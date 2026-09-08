@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "tsx --test endpoints/newsletter/subscribe_POST.test.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
