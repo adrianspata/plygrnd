@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { GlobalContextProviders } from "./src/components/_globalContextProviders";
 import Page_0 from "./src/components/_index.tsx";
 import PageLayout_0 from "./src/components/_index.pageLayout.tsx";
+import AboutPage from "./src/components/About.tsx";
 
 if (!window.requestIdleCallback) {
   window.requestIdleCallback = (cb) => {
@@ -15,10 +16,15 @@ if (!window.requestIdleCallback) {
 import "./src/styles/base.css";
 import "./src/styles/global.css";
 
-const fileNameToRoute = new Map([["./src/components/_index.tsx","/"]]);
+const fileNameToRoute = new Map([
+  ["./src/components/_index.tsx", "/"],
+  ["./src/components/About.tsx", "/about"],
+]);
+
 const fileNameToComponent = new Map([
-    ["./src/components/_index.tsx", Page_0],
-  ]);
+  ["./src/components/_index.tsx", Page_0],
+  ["./src/components/About.tsx", AboutPage],
+]);
 
 function makePageRoute(filename: string) {
   const Component = fileNameToComponent.get(filename);
@@ -88,7 +94,9 @@ function NotFound() {
     <div>
       <h1>Not Found</h1>
       <p>The page you are looking for does not exist.</p>
-      <p>Go back to the <a href="/" style={{ color: 'blue' }}>home page</a>.</p>
+      <p>
+        Go back to the <a href="/" style={{ color: "blue" }}>home page</a>.
+      </p>
     </div>
   );
 }
@@ -98,9 +106,14 @@ export function App() {
     <BrowserRouter>
       <GlobalContextProviders>
         <Routes>
-          {toElement({ trie: buildLayoutTrie({
-"./src/components/_index.tsx": PageLayout_0,
-}), fileNameToRoute, makePageRoute })} 
+          {toElement({
+            trie: buildLayoutTrie({
+              "./src/components/_index.tsx": PageLayout_0,
+              "./src/components/About.tsx": PageLayout_0,
+            }),
+            fileNameToRoute,
+            makePageRoute,
+          })}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </GlobalContextProviders>

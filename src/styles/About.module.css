@@ -1,0 +1,148 @@
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  background-color: var(--background);
+  color: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-6);
+  overflow: hidden;
+  box-sizing: border-box;
+  cursor: none;
+}
+
+.container * {
+  cursor: none;
+}
+
+/* Stable Parent Interaction Wrapper with 3D Perspective */
+.aboutInteraction {
+  position: relative;
+  display: grid;
+  place-items: center;
+  perspective: 1000px;
+  cursor: none;
+  outline: none;
+  user-select: none;
+  padding: var(--spacing-4);
+}
+
+.aboutInteraction:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.3);
+  outline-offset: 12px;
+  border-radius: var(--radius-md);
+}
+
+/* Small, precise, editorial About copy */
+.aboutText {
+  grid-area: 1 / 1;
+  width: min(680px, calc(100vw - 48px));
+  font-family: "Space Mono", monospace;
+  font-size: clamp(0.875rem, 1.15vw, 1.125rem);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-align: center;
+  text-wrap: balance;
+  margin: 0;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 240ms ease,
+    visibility 240ms ease;
+  cursor: none;
+  z-index: 1;
+}
+
+/* Logo Wrapper occupying the exact same central position */
+.aboutLogoWrapper {
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 240ms ease,
+    visibility 240ms ease;
+  z-index: 2;
+}
+
+/* Logo with 3D Transform Settings */
+.aboutLogo {
+  width: clamp(72px, 8vw, 96px);
+  height: clamp(72px, 8vw, 96px);
+  object-fit: contain;
+  display: block;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.25));
+}
+
+/* 3D rotateY Animation around vertical Y-axis */
+@keyframes aboutLogoRotateY {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+/* Hover & Focus Interactions triggered by parent wrapper */
+.aboutInteraction:hover .aboutText,
+.aboutInteraction:focus-visible .aboutText,
+.aboutInteraction:focus-within .aboutText {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.aboutInteraction:hover .aboutLogoWrapper,
+.aboutInteraction:focus-visible .aboutLogoWrapper,
+.aboutInteraction:focus-within .aboutLogoWrapper {
+  opacity: 1;
+  visibility: visible;
+}
+
+.aboutInteraction:hover .aboutLogo,
+.aboutInteraction:focus-visible .aboutLogo,
+.aboutInteraction:focus-within .aboutLogo {
+  animation: aboutLogoRotateY 2.6s linear infinite;
+}
+
+/* Reduced Motion Mode */
+@media (prefers-reduced-motion: reduce) {
+  .aboutInteraction:hover .aboutLogo,
+  .aboutInteraction:focus-visible .aboutLogo,
+  .aboutInteraction:focus-within .aboutLogo {
+    animation: none;
+  }
+  .aboutText,
+  .aboutLogoWrapper {
+    transition: opacity 200ms ease;
+  }
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: var(--spacing-4);
+  }
+
+  .aboutText {
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+
+  .aboutLogo {
+    width: 64px;
+    height: 64px;
+  }
+}
