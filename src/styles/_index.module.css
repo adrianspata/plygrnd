@@ -3,11 +3,11 @@
   width: 100%;
   background-color: var(--background);
   color: var(--foreground);
-  cursor: none; /* Hide default cursor */
+  cursor: none; /* Hide default cursor for 3D experience */
 }
 
 .container * {
-  cursor: none; /* Hide default cursor on all child elements */
+  cursor: none; /* Hide default cursor on child elements outside modal */
 }
 
 .canvasContainer {
@@ -40,34 +40,105 @@
   align-items: center;
 }
 
-/* Newsletter Form */
+/* ==========================================================================
+   Newsletter Form Modal / Root Container
+   ========================================================================== */
+
 .formWrapper {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   padding: var(--spacing-6);
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
   
-  /* Semi-transparent black background with white border */
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
-  border: 1px solid white;
-  border-radius: var(--radius-lg);
+  /* Typography */
+  font-family: "Space Mono", monospace;
+
+  /* Form Container Radius: 28px */
+  border-radius: 28px;
+
+  /* Semi-transparent black background with crisp white rim border */
+  background: rgba(4, 4, 6, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 255, 255, 0.05);
+  
+  /* Custom sleek scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Inherit Space Mono across all form controls */
+.formWrapper,
+.formWrapper input,
+.formWrapper button,
+.formWrapper label,
+.formWrapper span,
+.formWrapper p,
+.formWrapper div {
+  font-family: "Space Mono", monospace;
+}
+
+/* Hide native cursor over form & inputs so custom cursor (I-beam on text fields, cross on canvas) renders cleanly */
+.formWrapper,
+.formWrapper input[type="text"],
+.formWrapper input[type="email"],
+.formWrapper input[type="tel"],
+.formWrapper input[type="search"],
+.formWrapper input[type="url"],
+.formWrapper textarea,
+.formWrapper [contenteditable="true"] {
+  cursor: none !important;
+}
+
+.formWrapper .chipContainer,
+.formWrapper .chipInput,
+.formWrapper .chipLabel,
+.formWrapper .consentLabelContainer,
+.formWrapper .consentCheckbox,
+.formWrapper .consentBox,
+.formWrapper .consentText,
+.formWrapper .submitButton {
+  cursor: pointer !important;
+}
+
+.formWrapper input:disabled,
+.formWrapper button:disabled,
+.formWrapper .chipInput:disabled + .chipLabel,
+.formWrapper .consentCheckbox:disabled ~ .consentBox,
+.formWrapper .consentCheckbox:disabled ~ .consentText {
+  cursor: not-allowed !important;
+}
+
+.formWrapper::-webkit-scrollbar {
+  width: 4px;
+}
+
+.formWrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
 }
 
 @media (max-width: 767px) {
   .formWrapper {
-    max-width: 280px;
+    max-width: 340px;
+    width: 92%;
     padding: var(--spacing-4);
+    max-height: calc(100vh - 30px);
+    border-radius: 24px;
   }
 
-  .formTitle {
-    font-size: 1.25rem;
+  .logoImage {
+    width: 56px !important;
+    height: 56px !important;
   }
 
   .formDescription {
@@ -75,12 +146,12 @@
   }
 
   .label {
-    font-size: 0.65rem;
+    font-size: 0.68rem;
   }
 
   .submitButton {
-    font-size: 0.85rem;
-    padding: 0.5rem;
+    font-size: 0.8rem;
+    padding: 0.6rem;
   }
 }
 
@@ -101,83 +172,363 @@
   opacity: 0;
 }
 
-.formTitle {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 900;
-  font-size: 1.75rem;
-  letter-spacing: 0.05em;
-  color: var(--foreground);
-  margin: 0;
+/* ==========================================================================
+   Logo & Header
+   ========================================================================== */
+
+.logoWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.logoImage {
+  width: 72px;
+  height: 72px;
+  max-width: 72px;
+  max-height: 72px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
 }
 
 .formDescription {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 0.75rem;
-  color: var(--foreground);
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.75);
   margin: 0;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
 }
+
+/* ==========================================================================
+   Form Layout & Inputs
+   ========================================================================== */
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
-  margin-top: var(--spacing-2);
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-1);
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
+  gap: 0.35rem;
   text-align: left;
 }
 
 .label {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--foreground);
+  font-family: "Space Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #ffffff;
   text-transform: uppercase;
 }
 
+.helperText {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.02em;
+  margin-top: 0.15rem;
+  line-height: 1.35;
+}
+
+/* Text Inputs - Radius: 14px */
 .input {
-  background: rgba(0, 0, 0, 1);
-  border-color: white;
-  color: white;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: rgba(10, 10, 14, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
   text-align: left;
-  border-radius: var(--radius);
+  border-radius: 14px;
+  height: 2.6rem;
+  padding: 0 0.9rem;
+  font-size: 0.85rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: text !important;
 }
 
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .input:focus {
-  border-color: white;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25);
   background: rgba(0, 0, 0, 1);
+  outline: none;
 }
 
 .input:hover {
-  border-color: white;
-  background: rgba(0, 0, 0, 1);
+  border-color: rgba(255, 255, 255, 0.8);
 }
 
-.error {
-  font-size: 0.75rem;
-  color: var(--error);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  text-align: center;
+.input[aria-invalid="true"] {
+  border-color: var(--error);
 }
+
+/* ==========================================================================
+   Interests Section (Chips - Radius: 14px)
+   ========================================================================== */
+
+.interestsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+  margin-top: 0.2rem;
+}
+
+.interestsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.chipContainer {
+  position: relative;
+  display: block;
+  cursor: pointer !important;
+}
+
+/* Visually styled native checkbox input */
+.chipInput {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  margin: 0;
+  z-index: 1;
+  cursor: pointer !important;
+}
+
+.chipLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 14px;
+  background: rgba(15, 15, 20, 0.7);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "Space Mono", monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  user-select: none;
+  cursor: pointer !important;
+}
+
+.chipInput:hover + .chipLabel {
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(30, 30, 40, 0.8);
+  color: #ffffff;
+}
+
+.chipInput:checked + .chipLabel {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+.chipInput:focus-visible + .chipLabel {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.chipInput:disabled + .chipLabel {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed !important;
+}
+
+/* ==========================================================================
+   Consent Checkbox (Radius: 5px)
+   ========================================================================== */
+
+.consentGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  text-align: left;
+  margin-top: 0.25rem;
+}
+
+.consentLabelContainer {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  position: relative;
+  cursor: pointer !important;
+}
+
+.consentCheckbox {
+  position: absolute;
+  opacity: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  top: 0.15rem;
+  left: 0;
+  margin: 0;
+  z-index: 1;
+  cursor: pointer !important;
+}
+
+.consentBox {
+  flex-shrink: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  background: transparent;
+  transition: all 0.2s ease;
+  cursor: pointer !important;
+}
+
+.consentCheckbox:hover ~ .consentBox {
+  border-color: #ffffff;
+}
+
+.consentCheckbox:checked ~ .consentBox {
+  background: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.consentCheckbox:focus-visible ~ .consentBox {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.consentCheckbox:disabled ~ .consentBox {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.consentText {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.02em;
+  cursor: pointer !important;
+}
+
+.consentCheckbox:checked ~ .consentText {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* ==========================================================================
+   Field & Server Errors (Radius: 14px)
+   ========================================================================== */
+
+.error {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-size: 0.68rem;
+  color: var(--error);
+  line-height: 1.3;
+}
+
+.serverErrorAlert {
+  padding: 0.65rem 0.9rem;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--error);
+  border-radius: 14px;
+  color: #ff8b8b;
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-size: 0.72rem;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.serverErrorAlert:focus {
+  outline: 2px solid var(--error);
+}
+
+/* ==========================================================================
+   Success View (Radius: 14px)
+   ========================================================================== */
+
+.successContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-2);
+  text-align: center;
+  border-radius: 14px;
+}
+
+.successMessage {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Submit Button (Radius: 14px)
+   ========================================================================== */
 
 .submitButton {
   width: 100%;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  letter-spacing: 0.15em;
+  font-family: "Space Mono", monospace;
+  letter-spacing: 0.12em;
   font-weight: 700;
-  border-radius: var(--radius);
-  background-color: #D9D9D9;
-  color: white;
+  font-size: 0.85rem;
+  border-radius: 14px;
+  background-color: #ffffff;
+  color: #000000;
+  margin-top: 0.4rem;
+  height: 2.75rem;
+  transition: all 0.2s ease;
+  cursor: pointer !important;
 }
 
+.submitButton:hover:not(:disabled) {
+  background-color: #e5e5e5;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  background-color: #777777;
+  color: #ffffff;
+  cursor: not-allowed !important;
+}
+
+/* Hidden Honeypot */
+.honeypotWrapper {
+  position: absolute;
+  opacity: 0;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}

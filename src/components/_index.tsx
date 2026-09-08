@@ -4,9 +4,7 @@ import { Text3D, Center, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { Loader2, CheckCircle2 } from "lucide-react";
 
 import { useAudioPlayer, SpotifyEmbed } from "./useAudioPlayer";
 import { useNewsletterSubscribe } from "./useNewsletterSubscribe";
@@ -16,20 +14,17 @@ import { Button } from "./Button";
 import { CornerHUD } from "./CornerHUD";
 import { CustomCursor } from "./CustomCursor";
 import styles from "../styles/_index.module.css";
+import {
+  InputSchema,
+  InputType,
+  ALLOWED_INTERESTS,
+} from "../../endpoints/newsletter/subscribe_POST.schema";
 
 const FONT_URL =
   "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json";
 const SCROLL_HEIGHT_VH = 500; // Total scroll height in VH
 const INTRO_DURATION = 8.0; // Increased duration for a slower, more cinematic intro
 const TOTAL_SPINS = 2; // Reduced spins (from 3) for a less dizzying effect
-
-type FormSchema = {
-  email: string;
-};
-
-const formSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-});
 
 // --- 3D Components ---
 
@@ -254,84 +249,51 @@ const NewsletterForm = ({
   onFormSubmit,
 }: {
   visible: boolean;
-  onFormSubmit: () => void;
+  onFormSubmit?: () => void;
 }) => {
   const { mutate: subscribe, isPending } = useNewsletterSubscribe();
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const statusSummaryRef = useRef<HTMLDivElement>(null);
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-    setValue,
-  } = useForm<FormSchema>({
-    resolver: zodResolver(formSchema),
+  } = useForm<InputType>({
+    resolver: zodResolver(InputSchema),
+    defaultValues: {
+      name: "",
+      phone: "",
+      email: "",
+      instagram_handle: "",
+      interests: [],
+      consent: false as unknown as true,
+      honeypot: "",
+    },
   });
 
+  const onSubmit = (data: InputType) => {
+    setServerError(null);
 
-
-  // Load saved emails from localStorage when component mounts or focus
-  const handleEmailFocus = () => {
-    const savedEmails = localStorage.getItem("savedEmails");
-    if (savedEmails) {
-      try {
-        const emails = JSON.parse(savedEmails);
-        setSuggestions(Array.isArray(emails) ? emails : []);
-        setShowSuggestions(true);
-      } catch (e) {
-        console.error("Failed to parse saved emails", e);
-      }
-    }
-  };
-
-  const handleSelectSuggestion = (email: string) => {
-    setValue("email", email);
-    setShowSuggestions(false);
-  };
-
-  const onSubmit = (data: FormSchema) => {
-    // Save email to localStorage
-    const savedEmails = localStorage.getItem("savedEmails");
-    let emailsList: string[] = [];
-    try {
-      emailsList = savedEmails ? JSON.parse(savedEmails) : [];
-    } catch (e) {
-      emailsList = [];
-    }
-
-    // Add new email if not already in list
-    if (!emailsList.includes(data.email)) {
-      emailsList.unshift(data.email); // Add to beginning
-      emailsList = emailsList.slice(0, 5); // Keep only last 5
-      localStorage.setItem("savedEmails", JSON.stringify(emailsList));
-    }
-
-    // Notify parent that form was submitted
-    onFormSubmit();
-
-    // Show success immediately - no waiting!
-    toast.success("Welcome to the playground.", {
-      description: "You have been added to the list.",
-    });
-
-    // Clear form immediately
-    reset();
-    setSuggestions([]);
-    setShowSuggestions(false);
-
-    // Scroll to top immediately
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    // Do the actual API call in background
     subscribe(data, {
+      onSuccess: () => {
+        setIsSuccess(true);
+        reset();
+        setTimeout(() => {
+          statusSummaryRef.current?.focus();
+        }, 50);
+        onFormSubmit?.();
+      },
       onError: (error) => {
-        // Only log error, don't show to user since they already saw success
-        console.error(
-          "Newsletter subscription error:",
-          error.message || "Something went wrong.",
-        );
+        const errorMsg =
+          error.message ||
+          "We couldn’t complete your signup right now. Please try again.";
+        setServerError(errorMsg);
+        setTimeout(() => {
+          statusSummaryRef.current?.focus();
+        }, 50);
       },
     });
   };
@@ -342,85 +304,246 @@ const NewsletterForm = ({
       aria-hidden={!visible}
     >
       <div className={styles.formContent}>
-        <h2 className={styles.formTitle}>PLYGRND</h2>
-        <p className={styles.formDescription}>
-          SUBSCRIBE FOR NEW UPDATES BY PLYGRND.
-        </p>
-
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-          <div className={styles.inputGroup}>
-            <label htmlFor="email-input" className={styles.label}>
-              EMAIL ADDRESS
-            </label>
-            <div style={{ position: "relative" }}>
-              <Input
-                {...register("email")}
-                id="email-input"
-                placeholder="your@email.com"
-                className={styles.input}
-                onFocus={handleEmailFocus}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                disabled={!visible || isPending}
+        {isSuccess ? (
+          <div
+            ref={statusSummaryRef}
+            tabIndex={-1}
+            role="status"
+            aria-live="polite"
+            className={styles.successContainer}
+          >
+            <img
+              src="/plygrndFaviconn.png"
+              alt="PLYGRND"
+              className={styles.logoImage}
+              width="64"
+              height="64"
+            />
+            <p className={styles.successMessage}>
+              You’re in. Keep an eye on your inbox for a welcome from PLYGRND.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className={styles.logoWrapper}>
+              <img
+                src="/plygrndFaviconn.png"
+                alt="PLYGRND"
+                className={styles.logoImage}
+                width="72"
+                height="72"
               />
-              {showSuggestions && suggestions.length > 0 && (
+            </div>
+            <p className={styles.formDescription}>
+              SUBSCRIBE FOR NEW UPDATES BY PLYGRND.
+            </p>
+
+            {serverError && (
+              <div
+                ref={statusSummaryRef}
+                tabIndex={-1}
+                role="status"
+                aria-live="polite"
+                className={styles.serverErrorAlert}
+              >
+                {serverError}
+              </div>
+            )}
+
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className={styles.form}
+              noValidate
+            >
+              {/* Honeypot field for bot protection */}
+              <div className={styles.honeypotWrapper} aria-hidden="true">
+                <input
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  {...register("honeypot")}
+                />
+              </div>
+
+              {/* 1. Name */}
+              <div className={styles.inputGroup}>
+                <label htmlFor="newsletter-name" className={styles.label}>
+                  Name
+                </label>
+                <Input
+                  {...register("name")}
+                  id="newsletter-name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Your Name"
+                  className={styles.input}
+                  disabled={!visible || isPending}
+                  aria-required="true"
+                  aria-invalid={!!errors.name}
+                  aria-describedby={errors.name ? "name-error" : undefined}
+                />
+                {errors.name && (
+                  <span id="name-error" className={styles.error}>
+                    {errors.name.message}
+                  </span>
+                )}
+              </div>
+
+              {/* 2. Phone number */}
+              <div className={styles.inputGroup}>
+                <label htmlFor="newsletter-phone" className={styles.label}>
+                  Phone number
+                </label>
+                <Input
+                  {...register("phone")}
+                  id="newsletter-phone"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="+46 70 123 4567"
+                  className={styles.input}
+                  disabled={!visible || isPending}
+                  aria-required="true"
+                  aria-invalid={!!errors.phone}
+                  aria-describedby={errors.phone ? "phone-error" : undefined}
+                />
+                {errors.phone && (
+                  <span id="phone-error" className={styles.error}>
+                    {errors.phone.message}
+                  </span>
+                )}
+              </div>
+
+              {/* 3. Email address */}
+              <div className={styles.inputGroup}>
+                <label htmlFor="newsletter-email" className={styles.label}>
+                  Email address
+                </label>
+                <Input
+                  {...register("email")}
+                  id="newsletter-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="your@email.com"
+                  className={styles.input}
+                  disabled={!visible || isPending}
+                  aria-required="true"
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                />
+                {errors.email && (
+                  <span id="email-error" className={styles.error}>
+                    {errors.email.message}
+                  </span>
+                )}
+              </div>
+
+              {/* 4. Instagram handle (Optional) */}
+              <div className={styles.inputGroup}>
+                <label htmlFor="newsletter-instagram" className={styles.label}>
+                  Instagram handle
+                </label>
+                <Input
+                  {...register("instagram_handle")}
+                  id="newsletter-instagram"
+                  type="text"
+                  autoComplete="username"
+                  placeholder="@username"
+                  className={styles.input}
+                  disabled={!visible || isPending}
+                  aria-required="false"
+                  aria-invalid={!!errors.instagram_handle}
+                  aria-describedby={
+                    errors.instagram_handle
+                      ? "instagram-error"
+                      : "instagram-helper"
+                  }
+                />
+                <span id="instagram-helper" className={styles.helperText}>
+                  Optional — because we’d love to connect with our community.
+                </span>
+                {errors.instagram_handle && (
+                  <span id="instagram-error" className={styles.error}>
+                    {errors.instagram_handle.message}
+                  </span>
+                )}
+              </div>
+
+              {/* 5. Interests (Multi-select Chips) */}
+              <div className={styles.interestsGroup}>
+                <span id="interests-label" className={styles.label}>
+                  Choose your interests
+                </span>
                 <div
-                  style={{
-                    position: "absolute",
-                    top: "100%",
-                    left: 0,
-                    right: 0,
-                    backgroundColor: "rgba(0, 0, 0, 0.9)",
-                    border: "1px solid white",
-                    borderTop: "none",
-                    borderRadius: "0 0 4px 4px",
-                    zIndex: 10,
-                    maxHeight: "200px",
-                    overflowY: "auto",
-                  }}
+                  role="group"
+                  aria-labelledby="interests-label"
+                  aria-describedby={
+                    errors.interests ? "interests-error" : undefined
+                  }
+                  className={styles.interestsGrid}
                 >
-                  {suggestions.map((email, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleSelectSuggestion(email)}
-                      style={{
-                        padding: "8px 12px",
-                        cursor: "pointer",
-                        borderBottom: index < suggestions.length - 1 ? "1px solid rgba(255,255,255,0.1)" : "none",
-                        color: "white",
-                        fontSize: "0.875rem",
-                        transition: "background-color 0.2s",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor = "transparent")
-                      }
-                    >
-                      {email}
-                    </div>
+                  {ALLOWED_INTERESTS.map((interest) => (
+                    <label key={interest} className={styles.chipContainer}>
+                      <input
+                        type="checkbox"
+                        value={interest}
+                        {...register("interests")}
+                        disabled={!visible || isPending}
+                        className={styles.chipInput}
+                      />
+                      <span className={styles.chipLabel}>{interest}</span>
+                    </label>
                   ))}
                 </div>
-              )}
-            </div>
-            {errors.email && (
-              <span className={styles.error}>{errors.email.message}</span>
-            )}
-          </div>
+                {errors.interests && (
+                  <span id="interests-error" className={styles.error}>
+                    {errors.interests.message}
+                  </span>
+                )}
+              </div>
 
-          <Button
-            type="submit"
-            variant="primary"
-            className={styles.submitButton}
-            disabled={!visible || isPending}
-          >
-            {isPending ? (
-              <Loader2 className="animate-spin" size={16} />
-            ) : (
-              "SUBSCRIBE"
-            )}
-          </Button>
-        </form>
+              {/* 6. Consent Checkbox */}
+              <div className={styles.consentGroup}>
+                <label className={styles.consentLabelContainer}>
+                  <input
+                    type="checkbox"
+                    {...register("consent")}
+                    disabled={!visible || isPending}
+                    className={styles.consentCheckbox}
+                    aria-required="true"
+                    aria-invalid={!!errors.consent}
+                    aria-describedby={
+                      errors.consent ? "consent-error" : undefined
+                    }
+                  />
+                  <div className={styles.consentBox} />
+                  <span className={styles.consentText}>
+                    I agree to receive emails from PLYGRND and understand that I
+                    can unsubscribe at any time.
+                  </span>
+                </label>
+                {errors.consent && (
+                  <span id="consent-error" className={styles.error}>
+                    {errors.consent.message}
+                  </span>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                variant="primary"
+                className={styles.submitButton}
+                disabled={!visible || isPending}
+              >
+                {isPending ? (
+                  <Loader2 className="animate-spin" size={16} />
+                ) : (
+                  "SUBSCRIBE"
+                )}
+              </Button>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );
@@ -499,7 +622,7 @@ export default function LandingPage() {
         {/* UI Overlays */}
         <div className={styles.uiLayer}>
           <NewsletterForm
-            visible={showForm && !formSubmitted}
+            visible={showForm}
             onFormSubmit={() => setFormSubmitted(true)}
           />
           {/* Hidden Spotify Controller - kept in DOM for audio playback */}
