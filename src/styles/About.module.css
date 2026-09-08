@@ -97,32 +97,46 @@
   }
 }
 
-/* Hover & Focus Interactions triggered by parent wrapper */
-.aboutInteraction:hover .aboutText,
-.aboutInteraction:focus-visible .aboutText,
-.aboutInteraction:focus-within .aboutText {
+/* Active & Keyboard Focus states */
+.aboutInteraction.active .aboutText,
+.aboutInteraction:focus-visible .aboutText {
   opacity: 0;
   visibility: hidden;
 }
 
-.aboutInteraction:hover .aboutLogoWrapper,
-.aboutInteraction:focus-visible .aboutLogoWrapper,
-.aboutInteraction:focus-within .aboutLogoWrapper {
+.aboutInteraction.active .aboutLogoWrapper,
+.aboutInteraction:focus-visible .aboutLogoWrapper {
   opacity: 1;
   visibility: visible;
 }
 
-.aboutInteraction:hover .aboutLogo,
-.aboutInteraction:focus-visible .aboutLogo,
-.aboutInteraction:focus-within .aboutLogo {
+.aboutInteraction.active .aboutLogo,
+.aboutInteraction:focus-visible .aboutLogo {
   animation: aboutLogoRotateY 2.6s linear infinite;
+}
+
+/* Hover state on devices that support hover (desktop mouse) */
+@media (hover: hover) and (pointer: fine) {
+  .aboutInteraction:hover .aboutText {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .aboutInteraction:hover .aboutLogoWrapper {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .aboutInteraction:hover .aboutLogo {
+    animation: aboutLogoRotateY 2.6s linear infinite;
+  }
 }
 
 /* Reduced Motion Mode */
 @media (prefers-reduced-motion: reduce) {
+  .aboutInteraction.active .aboutLogo,
   .aboutInteraction:hover .aboutLogo,
-  .aboutInteraction:focus-visible .aboutLogo,
-  .aboutInteraction:focus-within .aboutLogo {
+  .aboutInteraction:focus-visible .aboutLogo {
     animation: none;
   }
   .aboutText,

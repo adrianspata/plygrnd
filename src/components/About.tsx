@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAudioPlayer, SpotifyEmbed } from "./useAudioPlayer";
 import { CornerHUD } from "./CornerHUD";
 import { CustomCursor } from "./CustomCursor";
@@ -5,15 +6,29 @@ import styles from "../styles/About.module.css";
 
 export default function AboutPage() {
   const { isMuted, toggleMute } = useAudioPlayer();
+  const [isActive, setIsActive] = useState(false);
 
   return (
-    <main className={styles.container}>
+    <main
+      className={styles.container}
+      onClick={() => setIsActive(false)}
+    >
       {/* Central Interactive Content */}
       <div
-        className={styles.aboutInteraction}
+        className={`${styles.aboutInteraction} ${isActive ? styles.active : ""}`}
         tabIndex={0}
         role="region"
         aria-label="About PLYGRND"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsActive((prev) => !prev);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsActive((prev) => !prev);
+          }
+        }}
       >
         <p className={styles.aboutText}>
           Introducing plygrnd. - an independent creative studio, service, and
