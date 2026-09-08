@@ -459,7 +459,7 @@ const NewsletterForm = ({
                   }
                 />
                 <span id="instagram-helper" className={styles.helperText}>
-                  Optional — because we’d love to connect with our community.
+                  Optional — because we’d love to connect with you.
                 </span>
                 {errors.instagram_handle && (
                   <span id="instagram-error" className={styles.error}>
