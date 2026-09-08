@@ -45,7 +45,7 @@ The website introduces PLYGRND through an immersive, single-page digital experie
 | Styling | CSS Modules, global CSS, custom properties |
 | UI feedback | Sonner, Lucide React |
 | Audio | Spotify Embed IFrame API |
-| Newsletter | Web3Forms |
+| Newsletter | MailerLite (Server API, Single Opt-In) |
 | Analytics | Vercel Analytics |
 | Optional server layer | Hono, Kysely, PostgreSQL via postgres.js |
 
@@ -64,10 +64,11 @@ cd plygrnd
 npm install
 ```
 
-Create a `.env.local` file in the project root and add your own Web3Forms access key:
+Create a `.env.local` file in the project root and configure your MailerLite credentials:
 
 ```env
-VITE_WEB3FORMS_ACCESS_KEY=your_web3forms_access_key
+MAILERLITE_API_TOKEN=your_mailerlite_api_token_here
+MAILERLITE_GROUP_ID=your_mailerlite_group_id_here
 ```
 
 Start the development server:
@@ -83,6 +84,7 @@ Vite will print the local development URL in the terminal.
 | Command | Description |
 | --- | --- |
 | `npm run dev` | Starts the Vite development server |
+| `npm run test` | Runs the automated test suite |
 | `npm run build` | Creates an optimized production build in `dist/` |
 | `npm run preview` | Serves the production build locally for preview |
 
@@ -102,9 +104,45 @@ Vite will print the local development URL in the terminal.
 └── vite.config.ts          # Vite and SWC configuration
 ```
 
-## Newsletter architecture
+## Newsletter Integration (MailerLite)
 
-The current client-side subscription flow sends validated form data directly to Web3Forms. The repository also contains a server-side Hono endpoint backed by Kysely and PostgreSQL, but that endpoint is not part of the default Vite development or build flow.
+The newsletter subscription flow connects to MailerLite via a secure server-side endpoint (`/_api/newsletter/subscribe`).
+
+### Activation Mode: Immediate Activation (Single Opt-In)
+
+The PLYGRND newsletter uses **immediate activation (single opt-in)**:
+- Subscribers become active immediately upon submitting the form with explicit consent.
+- No confirmation email or double opt-in step is required from the user.
+- The subscription timestamp and source are captured directly by the MailerLite subscription event.
+
+### Lifecycle Workflow
+
+```
+Newsletter form submitted
+  → Server validates input & explicit consent
+  → Subscriber created/updated via MailerLite API
+  → Subscriber immediately joins PLYGRND Newsletter group
+  → MailerLite group automation triggers
+  → Welcome email sent by MailerLite
+```
+
+> **Important**: Welcome emails are managed entirely by MailerLite's group automation. Application code never sends welcome emails directly, preventing duplicate delivery.
+
+### Safeguards & Privacy
+
+- **No Silent Reactivation**: The integration never sends `resubscribe: true`. Previously unsubscribed, bounced, or junk contacts will not be silently reactivated by the API.
+- **Privacy-Safe Responses**: The frontend receives a consistent, non-sensitive confirmation without exposing whether an email was previously registered.
+- **No PII Logging**: Server logs exclude email addresses, phone numbers, Instagram handles, and API tokens.
+- **Explicit Consent**: The consent checkbox is strictly required and never preselected.
+
+### MailerLite Dashboard Setup
+
+1. **Subscriber Group**: Create a group named `PLYGRND Newsletter` and copy the numeric Group ID.
+2. **Custom Fields**:
+   - `instagram_handle` (Type: `Text`)
+   - `interests` (Type: `Text`)
+3. **Welcome Email Automation**: Set up a workflow triggered when a subscriber joins the `PLYGRND Newsletter` group.
+4. **API Token**: Generate a token from MailerLite Integrations -> API.
 
 ## Production
 
@@ -113,5 +151,3 @@ Create a production build with:
 ```bash
 npm run build
 ```
-
-The generated static files are written to `dist/` and can be deployed to a static hosting service.
