@@ -1,36 +1,51 @@
+import { useNavigate, useLocation } from "react-router-dom";
 import styles from "../styles/CornerHUD.module.css";
 
 interface CornerHUDProps {
-  scrollProgress: number;
+  scrollProgress?: number;
   soundOn: boolean;
   onSoundToggle: () => void;
   className?: string;
+  hideScrollIndicators?: boolean;
 }
 
 export const CornerHUD = ({
-  scrollProgress,
+  scrollProgress = 0,
   soundOn,
   onSoundToggle,
   className,
+  hideScrollIndicators = false,
 }: CornerHUDProps) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isAboutPage = location.pathname === "/about";
+
   const scrollPercentage = Math.round(scrollProgress * 100);
-  const showScrollText = scrollProgress < 0.1;
+  const showScrollText = !hideScrollIndicators && scrollProgress < 0.1;
 
   return (
     <div className={`${styles.container} ${className || ""}`}>
       {/* Top Left - Brand */}
       <div className={styles.topLeft}>
         <button
-          onClick={() => window.location.reload()}
+          onClick={() => navigate("/")}
           className={styles.brandButton}
-          aria-label="Reload page"
+          aria-label="PLYGRND Home"
         >
           PLYGRND.
         </button>
       </div>
 
-      {/* Top Right - Sound Toggle */}
+      {/* Top Right - Navigation (ABOUT -> SOUND) */}
       <div className={styles.topRight}>
+        <button
+          onClick={() => navigate(isAboutPage ? "/" : "/about")}
+          className={`${styles.navButton} ${isAboutPage ? styles.navButtonActive : ""}`}
+          aria-label={isAboutPage ? "Go to Home" : "Go to About"}
+        >
+          ABOUT
+        </button>
+
         <button
           onClick={onSoundToggle}
           className={styles.soundToggle}
@@ -44,25 +59,29 @@ export const CornerHUD = ({
       </div>
 
       {/* Bottom Left - Scroll Percentage */}
-      <div className={styles.bottomLeft}>
-        <span className={styles.scrollPercentage}>{scrollPercentage}%</span>
-        <div className={styles.progressBarContainer}>
-          <div className={styles.progressBarTrack}>
-            <div
-              className={styles.progressBarFill}
-              style={{ width: `${scrollPercentage}%` }}
-            />
+      {!hideScrollIndicators && (
+        <div className={styles.bottomLeft}>
+          <span className={styles.scrollPercentage}>{scrollPercentage}%</span>
+          <div className={styles.progressBarContainer}>
+            <div className={styles.progressBarTrack}>
+              <div
+                className={styles.progressBarFill}
+                style={{ width: `${scrollPercentage}%` }}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Bottom Right - Scroll Hint */}
-      <div
-        className={`${styles.bottomRight} ${showScrollText ? styles.visible : styles.hidden}`}
-      >
-        <span className={styles.scrollText}>SCROLL</span>
-        <div className={styles.verticalLine} />
-      </div>
+      {!hideScrollIndicators && (
+        <div
+          className={`${styles.bottomRight} ${showScrollText ? styles.visible : styles.hidden}`}
+        >
+          <span className={styles.scrollText}>SCROLL</span>
+          <div className={styles.verticalLine} />
+        </div>
+      )}
     </div>
   );
 };

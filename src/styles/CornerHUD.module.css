@@ -6,6 +6,11 @@
   height: 100%;
   z-index: var(--z-content-high);
   pointer-events: none;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.container * {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* Top Left - Brand */
@@ -30,7 +35,7 @@
 }
 
 .brandButton:hover {
-  opacity: 0.7;
+  color: #b3df25;
 }
 
 .brandButton:focus-visible {
@@ -38,14 +43,18 @@
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
 }
 
-/* Top Right - Sound Toggle */
+/* Top Right - Navigation (ABOUT -> SOUND) */
 .topRight {
   position: absolute;
   top: var(--spacing-6);
   right: var(--spacing-6);
   pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
 }
 
+.navButton,
 .soundToggle {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 0.75rem;
@@ -57,11 +66,24 @@
   padding: 0;
   cursor: pointer;
   transition: all var(--animation-duration-fast) ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
+.navButton:hover,
+.soundToggle:hover {
+  color: #b3df25;
+}
+
+.navButton:focus-visible,
 .soundToggle:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.navButtonActive {
+  color: #b3df25;
 }
 
 @keyframes breathe {
@@ -156,4 +178,27 @@
   width: 1px;
   height: 3rem;
   background-color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 767px) {
+  .topLeft {
+    top: var(--spacing-4);
+    left: var(--spacing-4);
+  }
+
+  .topRight {
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    gap: var(--spacing-4);
+  }
+
+  .bottomLeft {
+    bottom: var(--spacing-4);
+    left: var(--spacing-4);
+  }
+
+  .bottomRight {
+    bottom: var(--spacing-4);
+    right: var(--spacing-4);
+  }
 }
