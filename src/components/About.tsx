@@ -37,13 +37,46 @@ export default function AboutPage() {
         </p>
 
         <div className={styles.aboutLogoWrapper} aria-hidden="true">
-          <img
-            src="/assets/png2.png"
-            alt=""
-            className={styles.aboutLogo}
-            width="120"
-            height="120"
-          />
+          <div className={styles.logo3DContainer}>
+            {Array.from({ length: 32 }).map((_, index) => {
+              const totalLayers = 32;
+              const maxDepth = 3.6; // -3.6px to +3.6px = ~7.2px sleek 3D depth
+              const t = index / (totalLayers - 1); // 0 to 1
+              const u = 2 * t - 1; // -1 to +1
+              const z = u * maxDepth;
+
+              // Smooth dome curve for rounded balloon contours
+              const curve = Math.sqrt(Math.max(0, 1 - u * u));
+              // Micro-balloon scale: curves seamlessly from 0.955 at caps to 1.00 at center
+              const scale = 0.955 + 0.045 * Math.pow(curve, 0.7);
+
+              const brightness = 0.94 + 0.08 * (u > 0 ? Math.pow(u, 0.7) : 0);
+              const isFront = index === totalLayers - 1;
+              const isBack = index === 0;
+
+              return (
+                <img
+                  key={index}
+                  src="/assets/png2.png"
+                  alt={isFront ? "PLYGRND" : ""}
+                  className={`${styles.logoLayer} ${
+                    isFront
+                      ? styles.frontLayer
+                      : isBack
+                        ? styles.backLayer
+                        : styles.edgeLayer
+                  }`}
+                  style={{
+                    transform: `translateZ(${z.toFixed(2)}px) scale(${scale.toFixed(4)})`,
+                    filter: `brightness(${brightness.toFixed(3)})`,
+                  }}
+                  width="120"
+                  height="120"
+                  aria-hidden={!isFront}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
 
