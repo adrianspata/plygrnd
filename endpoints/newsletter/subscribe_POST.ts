@@ -11,7 +11,7 @@ interface RateLimitEntry {
 }
 const rateLimitMap = new Map<string, RateLimitEntry>();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 5;
+const MAX_REQUESTS_PER_WINDOW = 30;
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
@@ -242,16 +242,31 @@ export async function handle(request: Request): Promise<Response> {
       );
     }
 
-    // Sanitized error logging (no PII, no body)
+    // Parse MailerLite error message if provided
+    let errorMessage = "We couldn’t complete your signup right now. Please try again.";
+    try {
+      const mlErr = await mlResponse.json();
+      if (mlErr && typeof mlErr.message === "string" && mlErr.message.trim()) {
+        errorMessage = mlErr.message;
+        if (mlErr.errors && typeof mlErr.errors === "object") {
+          const firstErrList = Object.values(mlErr.errors)[0];
+          if (Array.isArray(firstErrList) && typeof firstErrList[0] === "string") {
+            errorMessage = firstErrList[0];
+          }
+        }
+      }
+    } catch {}
+
+    // Sanitized error logging
     console.error(
-      `MailerLite API returned unexpected status: ${mlResponse.status}`,
+      `MailerLite API returned status: ${mlResponse.status} - ${errorMessage}`,
     );
 
     const clientStatusCode = mlResponse.status >= 500 ? 502 : 400;
     return new Response(
       JSON.stringify({
         success: false,
-        message: "We couldn’t complete your signup right now. Please try again.",
+        message: errorMessage,
       }),
       {
         status: clientStatusCode,
