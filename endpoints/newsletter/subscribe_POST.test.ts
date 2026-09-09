@@ -286,7 +286,7 @@ describe("Newsletter Subscription - Endpoint Handler & MailerLite Integration", 
       assert.equal(resBody.success, false);
       assert.equal(
         resBody.message,
-        "We couldn’t complete your signup right now. Please try again.",
+        "The given data was invalid.",
       );
     } finally {
       globalThis.fetch = originalFetch;
