@@ -3,11 +3,13 @@
   width: 100%;
   background-color: var(--background);
   color: var(--foreground);
-  cursor: none; /* Hide default cursor for 3D experience */
+  cursor: none;
+  /* Hide default cursor for 3D experience */
 }
 
 .container * {
-  cursor: none; /* Hide default cursor on child elements outside modal */
+  cursor: none;
+  /* Hide default cursor on child elements outside modal */
 }
 
 .canvasContainer {
@@ -17,7 +19,8 @@
   width: 100vw;
   height: 100vh;
   z-index: 0;
-  pointer-events: none; /* Let scroll pass through to body */
+  pointer-events: none;
+  /* Let scroll pass through to body */
 }
 
 .scrollTrack {
@@ -57,12 +60,12 @@
   opacity: 0;
   transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
-  
+
   /* Typography */
   font-family: "Space Mono", monospace;
 
-  /* Form Container Radius: 24px */
-  border-radius: 24px;
+  /* Form Container Radius: 28px */
+  border-radius: 48px;
 
   /* Semi-transparent black background with crisp white rim border */
   background: rgba(4, 4, 6, 0.88);
@@ -70,7 +73,7 @@
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 255, 255, 0.05);
-  
+
   /* Custom sleek scrollbar */
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
@@ -112,9 +115,9 @@
 
 .formWrapper input:disabled,
 .formWrapper button:disabled,
-.formWrapper .chipInput:disabled + .chipLabel,
-.formWrapper .consentCheckbox:disabled ~ .consentBox,
-.formWrapper .consentCheckbox:disabled ~ .consentText {
+.formWrapper .chipInput:disabled+.chipLabel,
+.formWrapper .consentCheckbox:disabled~.consentBox,
+.formWrapper .consentCheckbox:disabled~.consentText {
   cursor: not-allowed !important;
 }
 
@@ -127,20 +130,27 @@
   border-radius: 4px;
 }
 
-@media (max-width: 767px), (max-height: 750px) {
+@media (max-width: 767px),
+(max-height: 750px) {
   .formWrapper {
     max-width: 270px;
     width: calc(100vw - 40px);
     padding: 10px 14px;
     max-height: none;
     overflow: hidden;
-    border-radius: 16px;
+    border-radius: 38px;
     transform: translate(-50%, -50%) scale(min(1, calc((100dvh - 90px) / 370)));
     transform-origin: center center;
   }
 
   .formContent {
     gap: 3px;
+  }
+
+  .logoWrapper::before {
+    width: 15px;
+    height: 15px;
+    filter: blur(1px);
   }
 
   .logoImage {
@@ -180,7 +190,7 @@
     height: 1.45rem;
     padding: 0 0.45rem;
     font-size: 0.52rem;
-    border-radius: 6px;
+    border-radius: 10px;
   }
 
   .interestsGroup {
@@ -195,7 +205,7 @@
   .chipLabel {
     padding: 0.16rem 0.25rem;
     font-size: 0.44rem;
-    border-radius: 6px;
+    border-radius: 10px;
     gap: 0.15rem;
   }
 
@@ -212,7 +222,7 @@
   .consentBox {
     width: 0.65rem;
     height: 0.65rem;
-    border-radius: 2.5px;
+    border-radius: 4px;
     margin-top: 0.04rem;
   }
 
@@ -224,7 +234,7 @@
   .submitButton {
     height: 1.55rem;
     font-size: 0.54rem;
-    border-radius: 6px;
+    border-radius: 10px;
     margin-top: 1px;
     letter-spacing: 0.08em;
   }
@@ -236,7 +246,7 @@
   .serverErrorAlert {
     padding: 0.25rem 0.4rem;
     font-size: 0.45rem;
-    border-radius: 6px;
+    border-radius: 10px;
   }
 }
 
@@ -262,20 +272,38 @@
    ========================================================================== */
 
 .logoWrapper {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 0 auto;
 }
 
+.logoWrapper::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 34px;
+  height: 34px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.06) 45%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(1px);
+}
+
 .logoImage {
+  position: relative;
+  z-index: 1;
   width: 44px;
   height: 44px;
   max-width: 44px;
   max-height: 44px;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.15));
 }
 
 .formDescription {
@@ -325,7 +353,7 @@
   line-height: 1.25;
 }
 
-/* Text Inputs - Radius: 10px */
+/* Text Inputs - Radius: 14px */
 .input {
   background: rgba(10, 10, 14, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -333,7 +361,7 @@
   font-family: "Space Mono", monospace;
   font-weight: 400;
   text-align: left;
-  border-radius: 10px;
+  border-radius: 100px;
   height: 2.15rem;
   padding: 0 0.75rem;
   font-size: 0.74rem;
@@ -363,7 +391,7 @@
 }
 
 /* ==========================================================================
-   Interests Section (Chips - Radius: 10px)
+   Interests Section (Chips - Radius: 14px)
    ========================================================================== */
 
 .interestsGroup {
@@ -406,7 +434,7 @@
   gap: 0.35rem;
   padding: 0.45rem 0.6rem;
   border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 10px;
+  border-radius: 100px;
   background: rgba(15, 15, 20, 0.7);
   color: rgba(255, 255, 255, 0.85);
   font-family: "Space Mono", monospace;
@@ -419,13 +447,13 @@
   cursor: pointer !important;
 }
 
-.chipInput:hover + .chipLabel {
+.chipInput:hover+.chipLabel {
   border-color: rgba(255, 255, 255, 0.8);
   background: rgba(30, 30, 40, 0.8);
   color: #ffffff;
 }
 
-.chipInput:checked + .chipLabel {
+.chipInput:checked+.chipLabel {
   background: #ffffff;
   color: #000000;
   border-color: #ffffff;
@@ -433,19 +461,19 @@
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
 }
 
-.chipInput:focus-visible + .chipLabel {
+.chipInput:focus-visible+.chipLabel {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
 
-.chipInput:disabled + .chipLabel {
+.chipInput:disabled+.chipLabel {
   opacity: 0.5;
   pointer-events: none;
   cursor: not-allowed !important;
 }
 
 /* ==========================================================================
-   Consent Checkbox (Radius: 4px)
+   Consent Checkbox (Radius: 5px)
    ========================================================================== */
 
 .consentGroup {
@@ -482,28 +510,28 @@
   height: 0.95rem;
   margin-top: 0.08rem;
   border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 4px;
+  border-radius: 100px;
   background: transparent;
   transition: all 0.2s ease;
   cursor: pointer !important;
 }
 
-.consentCheckbox:hover ~ .consentBox {
+.consentCheckbox:hover~.consentBox {
   border-color: #ffffff;
 }
 
-.consentCheckbox:checked ~ .consentBox {
+.consentCheckbox:checked~.consentBox {
   background: #ffffff;
   border-color: #ffffff;
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
-.consentCheckbox:focus-visible ~ .consentBox {
+.consentCheckbox:focus-visible~.consentBox {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
 }
 
-.consentCheckbox:disabled ~ .consentBox {
+.consentCheckbox:disabled~.consentBox {
   opacity: 0.5;
   cursor: not-allowed !important;
 }
@@ -518,12 +546,12 @@
   cursor: pointer !important;
 }
 
-.consentCheckbox:checked ~ .consentText {
+.consentCheckbox:checked~.consentText {
   color: rgba(255, 255, 255, 0.95);
 }
 
 /* ==========================================================================
-   Field & Server Errors (Radius: 10px)
+   Field & Server Errors (Radius: 14px)
    ========================================================================== */
 
 .error {
@@ -538,7 +566,7 @@
   padding: 0.5rem 0.75rem;
   background: rgba(239, 68, 68, 0.15);
   border: 1px solid var(--error);
-  border-radius: 10px;
+  border-radius: 14px;
   color: #ff8b8b;
   font-family: "Space Mono", monospace;
   font-weight: 400;
@@ -552,7 +580,7 @@
 }
 
 /* ==========================================================================
-   Success View (Radius: 10px)
+   Success View (Radius: 14px)
    ========================================================================== */
 
 .successContainer {
@@ -563,7 +591,7 @@
   gap: var(--spacing-3);
   padding: var(--spacing-3) var(--spacing-2);
   text-align: center;
-  border-radius: 10px;
+  border-radius: 14px;
 }
 
 .successMessage {
@@ -577,7 +605,7 @@
 }
 
 /* ==========================================================================
-   Submit Button (Radius: 10px)
+   Submit Button (Radius: 14px)
    ========================================================================== */
 
 .submitButton {
@@ -586,10 +614,11 @@
   letter-spacing: 0.12em;
   font-weight: 700;
   font-size: 0.76rem;
-  border-radius: 10px;
+  border-radius: 100px;
   background-color: #ffffff;
   color: #000000;
   margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
   height: 2.35rem;
   transition: all 0.2s ease;
   cursor: pointer !important;
