@@ -45,6 +45,46 @@ if (typeof setInterval !== "undefined") {
   }
 }
 
+function getEnvVar(key: string): string | undefined {
+  if (process.env[key]) return process.env[key];
+  try {
+    if (typeof process !== "undefined" && typeof process.cwd === "function") {
+      // Dynamic fallback reading for local environments
+      const fs = (globalThis as any).require
+        ? (globalThis as any).require("fs")
+        : undefined;
+      const path = (globalThis as any).require
+        ? (globalThis as any).require("path")
+        : undefined;
+      if (fs && path) {
+        const candidates = [
+          path.resolve(process.cwd(), ".env.local"),
+          path.resolve(process.cwd(), ".env"),
+        ];
+        for (const p of candidates) {
+          if (fs.existsSync(p)) {
+            const content = fs.readFileSync(p, "utf-8");
+            for (const line of content.split("\n")) {
+              const match = line.match(/^\s*([A-Za-z_0-9]+)\s*=\s*(.*)?\s*$/);
+              if (match && match[1] === key && match[2]) {
+                let val = match[2].trim();
+                if (
+                  (val.startsWith('"') && val.endsWith('"')) ||
+                  (val.startsWith("'") && val.endsWith("'"))
+                ) {
+                  val = val.slice(1, -1);
+                }
+                return val;
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch {}
+  return undefined;
+}
+
 export async function handle(request: Request): Promise<Response> {
   // 1. Enforce POST method
   if (request.method !== "POST") {
@@ -135,8 +175,8 @@ export async function handle(request: Request): Promise<Response> {
   }
 
   // 5. Verify MailerLite server-side environment variables
-  const mailerliteToken = process.env.MAILERLITE_API_TOKEN;
-  const mailerliteGroupId = process.env.MAILERLITE_GROUP_ID;
+  const mailerliteToken = getEnvVar("MAILERLITE_API_TOKEN");
+  const mailerliteGroupId = getEnvVar("MAILERLITE_GROUP_ID");
 
   if (!mailerliteToken || !mailerliteGroupId) {
     // Sanitized server log (no PII, no token)
@@ -155,12 +195,13 @@ export async function handle(request: Request): Promise<Response> {
     );
   }
 
-  // 6. Format MailerLite subscriber payload
+  // 6. Format MailerLite subscriber payload (Single Opt-In: status is set directly to active)
   const formattedInterests = formatInterests(data.interests);
   const normalizedIg = normalizeInstagramHandle(data.instagram_handle) || "";
 
   const mailerlitePayload = {
     email: data.email,
+    status: "active",
     fields: {
       name: data.name,
       phone: data.phone,
