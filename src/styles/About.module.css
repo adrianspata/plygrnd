@@ -24,7 +24,7 @@
   position: relative;
   display: grid;
   place-items: center;
-  perspective: 1000px;
+  perspective: 1200px;
   cursor: none;
   outline: none;
   user-select: none;
@@ -37,7 +37,7 @@
   border-radius: var(--radius-md);
 }
 
-/* Small, precise, editorial About copy */
+/* Editorial About copy */
 .aboutText {
   grid-area: 1 / 1;
   width: min(680px, calc(100vw - 48px));
@@ -72,28 +72,58 @@
     opacity 240ms ease,
     visibility 240ms ease;
   z-index: 2;
+  transform-style: preserve-3d;
 }
 
-/* Logo with 3D Transform Settings */
-.aboutLogo {
-  width: clamp(72px, 8vw, 96px);
-  height: clamp(72px, 8vw, 96px);
+/* 3D Inflated Puffy Balloon Logo Container */
+.logo3DContainer {
+  position: relative;
+  width: clamp(76px, 8.5vw, 100px);
+  height: clamp(76px, 8.5vw, 100px);
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Individual 3D Balloon Slices */
+.logoLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   display: block;
-  transform-origin: center center;
-  transform-style: preserve-3d;
   backface-visibility: visible;
+  pointer-events: none;
+  user-select: none;
+  transform-style: preserve-3d;
   will-change: transform, opacity;
-  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.25));
 }
 
-/* 3D rotateY Animation around vertical Y-axis */
-@keyframes aboutLogoRotateY {
-  from {
-    transform: rotateY(0deg);
+/* Front Pole with soft ambient specular highlight */
+.frontLayer {
+  filter: brightness(1.02) drop-shadow(0 0.5px 1.5px rgba(0, 0, 0, 0.12)) !important;
+}
+
+.backLayer {
+  filter: brightness(0.93) !important;
+}
+
+.edgeLayer {
+  filter: brightness(0.96) !important;
+}
+
+/* 3D Rotation Animation around Y with gentle X-tilt */
+@keyframes aboutLogoRotate3D {
+  0% {
+    transform: rotateX(10deg) rotateY(0deg);
   }
-  to {
-    transform: rotateY(360deg);
+  100% {
+    transform: rotateX(10deg) rotateY(360deg);
   }
 }
 
@@ -110,9 +140,9 @@
   visibility: visible;
 }
 
-.aboutInteraction.active .aboutLogo,
-.aboutInteraction:focus-visible .aboutLogo {
-  animation: aboutLogoRotateY 2.6s linear infinite;
+.aboutInteraction.active .logo3DContainer,
+.aboutInteraction:focus-visible .logo3DContainer {
+  animation: aboutLogoRotate3D 2.8s linear infinite;
 }
 
 /* Hover state on devices that support hover (desktop mouse) */
@@ -127,17 +157,18 @@
     visibility: visible;
   }
 
-  .aboutInteraction:hover .aboutLogo {
-    animation: aboutLogoRotateY 2.6s linear infinite;
+  .aboutInteraction:hover .logo3DContainer {
+    animation: aboutLogoRotate3D 2.8s linear infinite;
   }
 }
 
 /* Reduced Motion Mode */
 @media (prefers-reduced-motion: reduce) {
-  .aboutInteraction.active .aboutLogo,
-  .aboutInteraction:hover .aboutLogo,
-  .aboutInteraction:focus-visible .aboutLogo {
+  .aboutInteraction.active .logo3DContainer,
+  .aboutInteraction:hover .logo3DContainer,
+  .aboutInteraction:focus-visible .logo3DContainer {
     animation: none;
+    transform: rotateX(10deg) rotateY(25deg);
   }
   .aboutText,
   .aboutLogoWrapper {
@@ -155,8 +186,8 @@
     line-height: 1.45;
   }
 
-  .aboutLogo {
-    width: 64px;
-    height: 64px;
+  .logo3DContainer {
+    width: 66px;
+    height: 66px;
   }
 }
