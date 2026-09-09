@@ -313,7 +313,7 @@ const NewsletterForm = ({
             className={styles.successContainer}
           >
             <img
-              src="/plygrndFaviconn.png"
+              src="/assets/png2.png"
               alt="PLYGRND"
               className={styles.logoImage}
               width="64"
@@ -327,7 +327,7 @@ const NewsletterForm = ({
           <>
             <div className={styles.logoWrapper}>
               <img
-                src="/plygrndFaviconn.png"
+                src="/assets/png2.png"
                 alt="PLYGRND"
                 className={styles.logoImage}
                 width="72"
