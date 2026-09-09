@@ -356,11 +356,17 @@ const NewsletterForm = ({
               noValidate
             >
               {/* Honeypot field for bot protection */}
-              <div className={styles.honeypotWrapper} aria-hidden="true">
+              <div
+                className={styles.honeypotWrapper}
+                aria-hidden="true"
+                style={{ display: "none" }}
+              >
                 <input
                   type="text"
                   tabIndex={-1}
                   autoComplete="off"
+                  data-lpignore="true"
+                  data-form-type="other"
                   {...register("honeypot")}
                 />
               </div>
@@ -440,7 +446,7 @@ const NewsletterForm = ({
               {/* 4. Instagram handle (Optional) */}
               <div className={styles.inputGroup}>
                 <label htmlFor="newsletter-instagram" className={styles.label}>
-                  Instagram handle
+                  Instagram
                 </label>
                 <Input
                   {...register("instagram_handle")}
@@ -517,7 +523,7 @@ const NewsletterForm = ({
                   />
                   <div className={styles.consentBox} />
                   <span className={styles.consentText}>
-                    I agree to receive emails from PLYGRND and understand that I
+                    I agree to receive emails from PLYGRND. and understand that I
                     can unsubscribe at any time.
                   </span>
                 </label>
