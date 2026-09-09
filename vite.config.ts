@@ -1,4 +1,4 @@
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 
@@ -10,6 +10,14 @@ function apiDevPlugin(): Plugin {
         const url = req.url?.split("?")[0];
         if (url === "/_api/newsletter/subscribe" || url === "/_api/newsletter/subscribe/") {
           try {
+            const env = loadEnv(server.config.mode || "development", process.cwd(), "");
+            if (env.MAILERLITE_API_TOKEN) {
+              process.env.MAILERLITE_API_TOKEN = env.MAILERLITE_API_TOKEN;
+            }
+            if (env.MAILERLITE_GROUP_ID) {
+              process.env.MAILERLITE_GROUP_ID = env.MAILERLITE_GROUP_ID;
+            }
+
             const { handle } = await server.ssrLoadModule(
               "/endpoints/newsletter/subscribe_POST.ts",
             );
