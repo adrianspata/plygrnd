@@ -1,6 +1,32 @@
+import fs from "node:fs";
+import path from "node:path";
 import { Hono } from "hono";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { serve } from "@hono/node-server";
+
+// Load environment variables for local/node execution
+const cwd = process.cwd();
+for (const envFile of [".env.local", ".env"]) {
+  const envPath = path.resolve(cwd, envFile);
+  if (fs.existsSync(envPath)) {
+    const content = fs.readFileSync(envPath, "utf-8");
+    for (const line of content.split("\n")) {
+      const match = line.match(/^\s*([A-Za-z_0-9]+)\s*=\s*(.*)?\s*$/);
+      if (match && match[1] && match[2] !== undefined) {
+        let val = match[2].trim();
+        if (
+          (val.startsWith('"') && val.endsWith('"')) ||
+          (val.startsWith("'") && val.endsWith("'"))
+        ) {
+          val = val.slice(1, -1);
+        }
+        if (!process.env[match[1]]) {
+          process.env[match[1]] = val;
+        }
+      }
+    }
+  }
+}
 
 const app = new Hono();
 
