@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/_api/newsletter/subscribe",
+      "destination": "/api/newsletter/subscribe"
+    },
+    {
+      "source": "/_api/newsletter/subscribe/",
+      "destination": "/api/newsletter/subscribe"
+    },
+    {
+      "source": "/((?!api/|_api/|assets/|_assets/|.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
