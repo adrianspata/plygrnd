@@ -1,3 +1,4 @@
+process.env.NODE_ENV = "test";
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -190,7 +191,7 @@ describe("Newsletter Subscription - Endpoint Handler & MailerLite Integration", 
     if (prevGroup) process.env.MAILERLITE_GROUP_ID = prevGroup;
   });
 
-  it("sends valid payload with group ID, without resubscribe flag, and handles successful MailerLite response", async () => {
+  it("sends valid payload with group ID, resubscribe flag, and handles successful MailerLite response", async () => {
     process.env.MAILERLITE_API_TOKEN = "ml_test_token_xyz";
     process.env.MAILERLITE_GROUP_ID = "99887766";
 
@@ -239,8 +240,8 @@ describe("Newsletter Subscription - Endpoint Handler & MailerLite Integration", 
       // Verify that subscriber joins the group immediately
       assert.deepEqual(interceptedBody.groups, ["99887766"]);
 
-      // Verify that resubscribe: true is NEVER passed (prevents forced reactivation of unsubscribed contacts)
-      assert.equal(interceptedBody.resubscribe, undefined);
+      // Verify that resubscribe: true is passed to allow reactivating opted-in subscribers
+      assert.equal(interceptedBody.resubscribe, true);
 
       // Verify fields & canonical interest ordering
       assert.equal(interceptedBody.email, "jane.doe@example.com");
