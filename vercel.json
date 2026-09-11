@@ -3,11 +3,19 @@
   "rewrites": [
     {
       "source": "/_api/newsletter/subscribe",
-      "destination": "/api/newsletter/subscribe"
+      "destination": "/api/subscribe"
     },
     {
       "source": "/_api/newsletter/subscribe/",
-      "destination": "/api/newsletter/subscribe"
+      "destination": "/api/subscribe"
+    },
+    {
+      "source": "/api/newsletter/subscribe",
+      "destination": "/api/subscribe"
+    },
+    {
+      "source": "/api/newsletter/subscribe/",
+      "destination": "/api/subscribe"
     },
     {
       "source": "/((?!api/|_api/|assets/|_assets/|.*\\..*).*)",
