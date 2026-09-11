@@ -1,1 +1,1 @@
-export { default, POST } from "../newsletter/subscribe";
+export { default } from "../newsletter/subscribe";
