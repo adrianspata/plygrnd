@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import {
   InputSchema,
   formatInterests,
@@ -47,41 +49,37 @@ if (typeof setInterval !== "undefined") {
 
 function getEnvVar(key: string): string | undefined {
   if (process.env[key]) return process.env[key];
+  if (process.env.NODE_ENV === "test") return undefined;
   try {
-    if (typeof process !== "undefined" && typeof process.cwd === "function") {
-      // Dynamic fallback reading for local environments
-      const fs = (globalThis as any).require
-        ? (globalThis as any).require("fs")
-        : undefined;
-      const path = (globalThis as any).require
-        ? (globalThis as any).require("path")
-        : undefined;
-      if (fs && path) {
-        const candidates = [
-          path.resolve(process.cwd(), ".env.local"),
-          path.resolve(process.cwd(), ".env"),
-        ];
-        for (const p of candidates) {
-          if (fs.existsSync(p)) {
-            const content = fs.readFileSync(p, "utf-8");
-            for (const line of content.split("\n")) {
-              const match = line.match(/^\s*([A-Za-z_0-9]+)\s*=\s*(.*)?\s*$/);
-              if (match && match[1] === key && match[2]) {
-                let val = match[2].trim();
-                if (
-                  (val.startsWith('"') && val.endsWith('"')) ||
-                  (val.startsWith("'") && val.endsWith("'"))
-                ) {
-                  val = val.slice(1, -1);
-                }
-                return val;
-              }
+    const cwd =
+      typeof process !== "undefined" && typeof process.cwd === "function"
+        ? process.cwd()
+        : ".";
+    const candidates = [
+      path.resolve(cwd, ".env.local"),
+      path.resolve(cwd, ".env"),
+    ];
+    for (const p of candidates) {
+      if (fs.existsSync(p)) {
+        const content = fs.readFileSync(p, "utf-8");
+        for (const line of content.split("\n")) {
+          const match = line.match(/^\s*([A-Za-z_0-9]+)\s*=\s*(.*)?\s*$/);
+          if (match && match[1] === key && match[2] !== undefined) {
+            let val = match[2].trim();
+            if (
+              (val.startsWith('"') && val.endsWith('"')) ||
+              (val.startsWith("'") && val.endsWith("'"))
+            ) {
+              val = val.slice(1, -1);
             }
+            return val;
           }
         }
       }
     }
-  } catch {}
+  } catch (err) {
+    console.error("Error reading fallback env files:", err);
+  }
   return undefined;
 }
 
@@ -202,6 +200,7 @@ export async function handle(request: Request): Promise<Response> {
   const mailerlitePayload = {
     email: data.email,
     status: "active",
+    resubscribe: true,
     fields: {
       name: data.name,
       phone: data.phone,
